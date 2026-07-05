@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>QuickWindowScreenshot.Core</AssemblyName>
+    <RootNamespace>QuickWindowScreenshot</RootNamespace>
+    <Product>Quick Window Screenshot</Product>
+    <Title>Quick Window Screenshot Core</Title>
+    <Version>0.3.0</Version>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <NuGetAudit>false</NuGetAudit>
+    <NoWarn>$(NoWarn);NU1900</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ScreenCapture.NET.DX11" Version="3.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.9" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/QuickWindowScreenshot.Core/QuickWindowScreenshot.Core.csproj" />
+    <Project Path="src/QuickWindowScreenshot/QuickWindowScreenshot.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/QuickWindowScreenshot.Tests/QuickWindowScreenshot.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/WgcSmoke/WgcSmoke.csproj" />
+  </Folder>
+</Solution>

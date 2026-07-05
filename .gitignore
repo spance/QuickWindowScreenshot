@@ -1,0 +1,26 @@
+# Build output
+bin/
+obj/
+publish/
+artifacts/
+
+# User and IDE state
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+
+# OS/filesystem noise
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Local archives generated during packaging
+*.zip

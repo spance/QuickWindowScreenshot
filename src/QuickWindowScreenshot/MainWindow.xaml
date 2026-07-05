@@ -1,0 +1,414 @@
+<Window
+    x:Class="QuickWindowScreenshot.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Quick Window Screenshot">
+
+    <Grid x:Name="Root" Background="{StaticResource AppBodyBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="TitleBarRow" Height="42" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="34" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Background="{StaticResource AppChromeBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="TitleBarLeftInset" Width="0" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="TitleBarRightInset" Width="0" />
+            </Grid.ColumnDefinitions>
+
+            <TabView
+                x:Name="TitleTabs"
+                Grid.Column="2"
+                Width="170"
+                Height="40"
+                Margin="0,2,0,0"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                CanDragTabs="False"
+                IsAddTabButtonVisible="False"
+                SelectedIndex="0"
+                SelectionChanged="TitleTabs_SelectionChanged"
+                TabWidthMode="SizeToContent">
+                <TabView.Resources>
+                    <SolidColorBrush x:Key="TabViewItemHeaderBackground" Color="Transparent" />
+                    <SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="Transparent" />
+                    <SolidColorBrush x:Key="TabViewItemHeaderDragBackground" Color="#E8EEF7" />
+                    <SolidColorBrush x:Key="TabViewItemHeaderBackgroundPointerOver" Color="#E8EEF7" />
+                    <SolidColorBrush x:Key="TabViewItemHeaderBackgroundPressed" Color="#DDE7F3" />
+                    <SolidColorBrush x:Key="TabViewBorderBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="TabViewItemSeparator" Color="Transparent" />
+                    <SolidColorBrush x:Key="TabViewSelectedItemBorderBrush" Color="#1D6FD7" />
+                    <x:Double x:Key="TabViewItemMinWidth">72</x:Double>
+                    <Thickness x:Key="TabViewItemHeaderPadding">10,7,10,8</Thickness>
+                    <Thickness x:Key="TabViewItemHeaderPaddingWithoutCloseButton">10,7,10,8</Thickness>
+                    <Thickness x:Key="TabViewSelectedItemBorderThickness">0,0,0,2</Thickness>
+                    <Thickness x:Key="TabViewSelectedItemHeaderMargin">0,0,0,0</Thickness>
+                </TabView.Resources>
+                <TabViewItem
+                    Header="截图"
+                    HorizontalContentAlignment="Center"
+                    IsClosable="False"
+                    Width="76" />
+                <TabViewItem
+                    Header="设置"
+                    HorizontalContentAlignment="Center"
+                    IsClosable="False"
+                    Width="76" />
+            </TabView>
+
+            <Border x:Name="TitleBarDragRegion" Grid.Column="3" Background="Transparent" />
+        </Grid>
+
+        <Grid Grid.Row="1" Padding="16,12,16,12">
+            <Grid x:Name="CapturePage">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border
+                    Padding="14"
+                    Background="White"
+                    BorderBrush="{StaticResource PanelBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <Grid RowSpacing="10" ColumnSpacing="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Style="{StaticResource SectionHeaderTextStyle}" Text="目标窗口" />
+                        <Border Grid.Row="1" Style="{StaticResource PanelSeparatorStyle}" />
+
+                        <Grid Grid.Row="2" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <RadioButton
+                                Content="🪟 窗口（无边框）"
+                                GroupName="TargetMode"
+                                IsChecked="{Binding IsWindowContentTarget, Mode=TwoWay}"
+                                Style="{StaticResource PanelRadioButtonStyle}" />
+                            <RadioButton
+                                Grid.Column="1"
+                                Content="🖥️ 全屏（当前激活）"
+                                GroupName="TargetMode"
+                                IsChecked="{Binding IsFullScreenTarget, Mode=TwoWay}"
+                                Style="{StaticResource PanelRadioButtonStyle}" />
+                        </Grid>
+
+                        <ComboBox
+                            Grid.Row="3"
+                            HorizontalAlignment="Stretch"
+                            DisplayMemberPath="DisplayName"
+                            IsEnabled="{Binding TargetWindowControlsEnabled, Mode=OneWay}"
+                            ItemsSource="{Binding Windows}"
+                            SelectedItem="{Binding SelectedWindow, Mode=TwoWay}" />
+
+                        <Grid Grid.Row="4" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Click="RefreshWindows_Click"
+                                Content="刷新"
+                                Style="{StaticResource PanelButtonStyle}" />
+                            <Button
+                                Grid.Column="1"
+                                Click="PickCurrentWindow_Click"
+                                Content="🪟 当前窗口"
+                                IsEnabled="{Binding TargetWindowControlsEnabled, Mode=OneWay}"
+                                Style="{StaticResource PanelButtonStyle}" />
+                            <Button
+                                Grid.Column="2"
+                                Click="PickWindowAfterDelay_Click"
+                                Content="⏱️ 3 秒后取"
+                                IsEnabled="{Binding TargetWindowControlsEnabled, Mode=OneWay}"
+                                Style="{StaticResource PanelButtonStyle}" />
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <Border
+                    Grid.Row="2"
+                    Padding="12"
+                    Background="White"
+                    BorderBrush="{StaticResource PanelBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <Grid RowSpacing="8" ColumnSpacing="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.ColumnSpan="2" Style="{StaticResource SectionHeaderTextStyle}" Text="截图控制" />
+                        <Border
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Style="{StaticResource PanelSeparatorStyle}" />
+
+                        <RadioButton
+                            Grid.Row="2"
+                            Content="📸 手动截图"
+                            GroupName="CaptureMode"
+                            IsChecked="{Binding IsManualMode, Mode=TwoWay}"
+                            Checked="ManualMode_Checked"
+                            Style="{StaticResource PanelRadioButtonStyle}" />
+                        <RadioButton
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Content="🔁 自动连续截图"
+                            GroupName="CaptureMode"
+                            IsChecked="{Binding IsAutoMode, Mode=TwoWay}"
+                            Style="{StaticResource PanelRadioButtonStyle}" />
+
+                        <CheckBox
+                            Grid.Row="3"
+                            HorizontalAlignment="Left"
+                            Content="前置目标窗口"
+                            IsChecked="{Binding BringToFront, Mode=TwoWay}"
+                            IsEnabled="{Binding BringToFrontOptionEnabled, Mode=OneWay}" />
+                        <Grid
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            HorizontalAlignment="Left"
+                            ColumnSpacing="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="96" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <NumberBox
+                                HorizontalAlignment="Stretch"
+                                MinWidth="0"
+                                Minimum="1"
+                                Maximum="86400"
+                                SmallChange="1"
+                                SpinButtonPlacementMode="Compact"
+                                Value="{Binding IntervalSeconds, Mode=TwoWay}"
+                                IsEnabled="{Binding AutoSettingsEnabled, Mode=OneWay}">
+                                <NumberBox.Resources>
+                                    <SolidColorBrush x:Key="TextControlBorderBrushDisabled" Color="#C8D1DE" />
+                                    <Thickness x:Key="TextControlBorderThemeThickness">1</Thickness>
+                                </NumberBox.Resources>
+                            </NumberBox>
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="#1F2937"
+                                Text="秒间隔" />
+                        </Grid>
+
+                        <Grid
+                            Grid.Row="4"
+                            Grid.ColumnSpan="2"
+                            VerticalAlignment="Top"
+                            ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Click="CaptureNow_Click"
+                                Content="📸 立即截图"
+                                IsEnabled="{Binding CaptureButtonEnabled, Mode=OneWay}"
+                                Style="{StaticResource PanelButtonStyle}" />
+                            <Button
+                                Grid.Column="1"
+                                Click="StartAuto_Click"
+                                Content="▶️ 开始自动"
+                                IsEnabled="{Binding StartAutoButtonEnabled, Mode=OneWay}"
+                                Style="{StaticResource PrimaryPanelButtonStyle}" />
+                            <Button
+                                Grid.Column="2"
+                                Click="StopAuto_Click"
+                                Content="⏹️ 停止自动"
+                                IsEnabled="{Binding StopAutoButtonEnabled, Mode=OneWay}"
+                                Style="{StaticResource PanelButtonStyle}" />
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Grid x:Name="SettingsPage" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border
+                    Padding="14"
+                    Background="White"
+                    BorderBrush="{StaticResource PanelBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <Grid RowSpacing="10" ColumnSpacing="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.ColumnSpan="2" Style="{StaticResource SectionHeaderTextStyle}" Text="输出与捕获" />
+
+                        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource FieldLabelTextStyle}" Text="输出目录：" />
+                        <TextBox
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Text="{Binding OutputDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Click="BrowseOutputDir_Click"
+                            Content="📂 浏览"
+                            Style="{StaticResource PanelButtonStyle}" />
+
+                        <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource FieldLabelTextStyle}" Text="文件名前缀：" />
+                        <TextBox
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Text="{Binding Prefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock
+                            Grid.Row="5"
+                            Grid.ColumnSpan="2"
+                            Foreground="{StaticResource MutedTextBrush}"
+                            Style="{StaticResource FieldLabelTextStyle}"
+                            Text="{Binding FileNamePreview, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis" />
+                    </Grid>
+                </Border>
+
+                <Border
+                    Grid.Row="2"
+                    Padding="14"
+                    Background="White"
+                    BorderBrush="{StaticResource PanelBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <Grid RowSpacing="10" ColumnSpacing="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.ColumnSpan="2" Style="{StaticResource SectionHeaderTextStyle}" Text="热键与捕获" />
+
+                        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource FieldLabelTextStyle}" Text="热键：" />
+                        <TextBox
+                            x:Name="HotkeyBox"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            KeyDown="HotkeyBox_KeyDown"
+                            Text="{Binding Hotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Click="ApplyHotkey_Click"
+                            Content="✅ 应用"
+                            Style="{StaticResource PanelButtonStyle}" />
+
+                        <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource FieldLabelTextStyle}" Text="捕获方式：" />
+                        <ComboBox
+                            Grid.Row="4"
+                            Grid.ColumnSpan="2"
+                            DisplayMemberPath="Name"
+                            ItemsSource="{Binding Backends}"
+                            SelectedItem="{Binding SelectedBackend, Mode=TwoWay}" />
+                    </Grid>
+                </Border>
+
+                <Border
+                    Grid.Row="4"
+                    Padding="14"
+                    Background="White"
+                    BorderBrush="{StaticResource PanelBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <Grid RowSpacing="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Style="{StaticResource SectionHeaderTextStyle}" Text="窗口诊断" />
+                        <TextBox
+                            Grid.Row="1"
+                            AcceptsReturn="True"
+                            FontFamily="Consolas"
+                            FontSize="12"
+                            IsReadOnly="True"
+                            Text="{Binding DiagnosticText, Mode=OneWay}"
+                            TextWrapping="NoWrap" />
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <Grid
+            Grid.Row="2"
+            Padding="16,0"
+            Background="{StaticResource AppChromeBrush}"
+            BorderBrush="{StaticResource PanelBorderBrush}"
+            BorderThickness="0,1,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Style="{StaticResource StatusTextStyle}"
+                Text="{Binding StatusText, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis" />
+            <StackPanel
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="2">
+                <Button
+                    Click="OpenOutputFolder_Click"
+                    Content="📁 输出目录"
+                    Style="{StaticResource StatusActionButtonStyle}" />
+                <TextBlock
+                    Style="{StaticResource StatusTextStyle}"
+                    Text="{Binding VersionText, Mode=OneWay}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
