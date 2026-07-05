@@ -28,4 +28,14 @@
     <ProjectReference Include="..\QuickWindowScreenshot.Core\QuickWindowScreenshot.Core.csproj" />
   </ItemGroup>
 
+  <Target Name="PrepareReleasePublishOutput" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release' and '$(PublishDir)' != ''">
+    <ItemGroup>
+      <WinUIPublishResource Include="$(OutputPath)*.xbf" />
+      <WinUIPublishResource Include="$(OutputPath)$(AssemblyName).pri" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(WinUIPublishResource)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\..\tools\TrimPublishOutput.ps1&quot; -PublishDir '$(PublishDir)'" Condition="'$(SkipTrimPublishOutput)' != 'true'" />
+  </Target>
+
 </Project>
