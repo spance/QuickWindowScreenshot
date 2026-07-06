@@ -1,0 +1,25 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Quick Window Screenshot logo">
+  <defs>
+    <linearGradient id="bg" x1="132" y1="132" x2="892" y2="892" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0D9AA5"/>
+      <stop offset="1" stop-color="#3D57E8"/>
+    </linearGradient>
+    <linearGradient id="focus" x1="410" y1="410" x2="614" y2="614" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#C7FCFF"/>
+      <stop offset="1" stop-color="#9AEBCF"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="96" y="96" width="832" height="832" rx="208" fill="url(#bg)"/>
+  <rect x="128" y="128" width="768" height="768" rx="176" fill="none" stroke="#FFFFFF" stroke-width="20" opacity="0.14"/>
+
+  <path d="M330 426V330h132M694 426V330H562M330 598v96h132M694 598v96H562"
+        fill="none" stroke="#F7FCFF" stroke-width="62" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M330 330h132M330 330v96"
+        fill="none" stroke="#76F4F4" stroke-width="24" stroke-linecap="round" opacity="0.82"/>
+
+  <rect x="424" y="424" width="176" height="176" rx="44" fill="url(#focus)" opacity="0.96"/>
+
+  <path d="M674 674l84 84" fill="none" stroke="#FFB44F" stroke-width="56" stroke-linecap="round"/>
+  <path d="M684 684l56 56" fill="none" stroke="#FFF0B8" stroke-width="16" stroke-linecap="round" opacity="0.78"/>
+</svg>

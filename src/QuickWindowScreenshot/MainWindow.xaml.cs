@@ -41,6 +41,7 @@ public sealed partial class MainWindow : Window
         _autoTimer = DispatcherQueue.CreateTimer();
         _autoTimer.Tick += AutoTimer_Tick;
 
+        ConfigureWindowIcon();
         ConfigureTitleBar();
         ConfigureWindow();
         _messageSubclass = new WindowMessageSubclass(_hwnd, TryHandleWindowMessage);
@@ -48,6 +49,15 @@ public sealed partial class MainWindow : Window
 
         _viewModel.RefreshWindows();
         _viewModel.ApplyHotkey(_hwnd);
+    }
+
+    private void ConfigureWindowIcon()
+    {
+        string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "QuickWindowScreenshot.ico");
+        if (File.Exists(iconPath))
+        {
+            _appWindow.SetIcon(iconPath);
+        }
     }
 
     private void ConfigureWindow()
